@@ -1,4 +1,5 @@
 import axios from 'axios'
+import PropTypes from 'prop-types'
 import React, { useState } from 'react'
 import '../css/login.css'
 
@@ -137,6 +138,11 @@ const LoginPage = ({ formType, setFormType }) => {
 			</button>
 		</div>
 	)
+}
+
+LoginPage.propTypes = {
+	formType: PropTypes.string.isRequired,
+	setFormType: PropTypes.func.isRequired,
 }
 
 export default LoginPage

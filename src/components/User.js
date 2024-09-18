@@ -7,12 +7,22 @@ const API_BASE_URL = `http://localhost:8080/api/v1/user/get/task/${localStorage.
 )}`
 const API_DELETE_URL = `http://localhost:8080/api/v1/user/delete/task/id`
 const API_COMPLETE_URL = `http://localhost:8080/api/v1/user/task/complete`
+const API_CREATE_URL = `http://localhost:8080/api/v1/user/add/task`
+const API_ADD_TASK_URL = `http://localhost:8080/api/v1/user/add/task/${localStorage.getItem(
+	'id'
+)}`
 
 const UserPage = () => {
 	const [tasks, setTasks] = useState([])
 	const [statusFilter, setStatusFilter] = useState('all')
 	const [dateFilter, setDateFilter] = useState('')
 	const [searchTerm, setSearchTerm] = useState('')
+
+	const [newTask, setNewTask] = useState({
+		taskName: '',
+		description: '',
+		endDate: '',
+	})
 
 	useEffect(() => {
 		const fetchTasks = async () => {
@@ -34,8 +44,8 @@ const UserPage = () => {
 	const filteredTasks = tasks.filter(task => {
 		const matchesStatus =
 			statusFilter === 'all' ||
-			(statusFilter === 'complete' && Boolean(task.complete)) ||
-			(statusFilter === 'pending' && !Boolean(task.complete))
+			(statusFilter === 'complete' && task.complete) ||
+			(statusFilter === 'pending' && !task.complete)
 
 		const matchesDate =
 			!dateFilter || new Date(task.endDate) <= new Date(dateFilter)
@@ -88,12 +98,84 @@ const UserPage = () => {
 		}
 	}
 
+	const handleCreateTask = async e => {
+		e.preventDefault()
+
+		const formattedEndDate = new Date(newTask.endDate).toISOString()
+
+		newTask.endDate = formattedEndDate
+
+		try {
+			const response = await axios.post(API_CREATE_URL, newTask, {
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem('token')}`,
+				},
+			})
+
+			console.log(response.data.id)
+
+			await axios.post(
+				`${API_ADD_TASK_URL}/${response.data.id}`,
+				{},
+				{
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem('token')}`,
+					},
+				}
+			)
+
+			setTasks([...tasks, response.data])
+			setNewTask({ taskName: '', description: '', endDate: '' })
+		} catch (error) {
+			console.error('Error creating task', error)
+		}
+	}
+
 	return (
 		<div className='user-page'>
 			<h1>Tasks</h1>
+			<div className='add-form'>
+				<form onSubmit={handleCreateTask} className='task-form'>
+					<label>
+						Task name:&nbsp;
+						<input
+							type='text'
+							value={newTask.taskName}
+							onChange={e =>
+								setNewTask({ ...newTask, taskName: e.target.value })
+							}
+							required
+						/>
+					</label>
+					<label>
+						Description:&nbsp;
+						<input
+							type='text'
+							value={newTask.description}
+							onChange={e =>
+								setNewTask({ ...newTask, description: e.target.value })
+							}
+							required
+						/>
+					</label>
+					<label>
+						End date:&nbsp;
+						<input
+							type='date'
+							value={newTask.endDate}
+							onChange={e =>
+								setNewTask({ ...newTask, endDate: e.target.value })
+							}
+							required
+						/>
+					</label>
+					<button type='submit'>Add task</button>
+				</form>
+			</div>
+
 			<div className='filters'>
 				<label>
-					Status:
+					Status:&nbsp;
 					<select
 						value={statusFilter}
 						onChange={e => setStatusFilter(e.target.value)}
@@ -103,8 +185,9 @@ const UserPage = () => {
 						<option value='pending'>Pending</option>
 					</select>
 				</label>
+
 				<label>
-					Due Date:
+					Due Date:&nbsp;
 					<input
 						type='date'
 						value={dateFilter}
@@ -112,7 +195,7 @@ const UserPage = () => {
 					/>
 				</label>
 				<label>
-					Search:
+					Search:&nbsp;
 					<input
 						type='text'
 						value={searchTerm}
@@ -127,7 +210,7 @@ const UserPage = () => {
 							<tr>
 								<th>Task Name</th>
 								<th>Description</th>
-								<th>Due Date</th>
+								<th>Date</th>
 								<th>Complete</th>
 								<th>Actions</th>
 							</tr>
