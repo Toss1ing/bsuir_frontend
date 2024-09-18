@@ -8,6 +8,10 @@
 	margin: 0 auto;
 }
 
+.user-page label {
+	margin-right: 0px;
+}
+
 .task-form button {
 	padding: 10px;
 	border: none;

@@ -137,7 +137,7 @@ const UserPage = () => {
 			<div className='add-form'>
 				<form onSubmit={handleCreateTask} className='task-form'>
 					<label>
-						Task name:&nbsp;
+						Task name:
 						<input
 							type='text'
 							value={newTask.taskName}
@@ -148,7 +148,7 @@ const UserPage = () => {
 						/>
 					</label>
 					<label>
-						Description:&nbsp;
+						Description:
 						<input
 							type='text'
 							value={newTask.description}
@@ -159,7 +159,7 @@ const UserPage = () => {
 						/>
 					</label>
 					<label>
-						End date:&nbsp;
+						End date:
 						<input
 							type='date'
 							value={newTask.endDate}
@@ -175,7 +175,7 @@ const UserPage = () => {
 
 			<div className='filters'>
 				<label>
-					Status:&nbsp;
+					Status:
 					<select
 						value={statusFilter}
 						onChange={e => setStatusFilter(e.target.value)}
@@ -187,7 +187,7 @@ const UserPage = () => {
 				</label>
 
 				<label>
-					Due Date:&nbsp;
+					Due Date:
 					<input
 						type='date'
 						value={dateFilter}
@@ -195,7 +195,7 @@ const UserPage = () => {
 					/>
 				</label>
 				<label>
-					Search:&nbsp;
+					Search:
 					<input
 						type='text'
 						value={searchTerm}
