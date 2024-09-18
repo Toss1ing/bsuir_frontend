@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # bsuir_frontend
 
 # Task Manager Project
