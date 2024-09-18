@@ -53,10 +53,10 @@
 - Фильтрация задач по статусу (все, выполненные, невыполненные) и дате завершения.
 - Удаление задач.
 
-[ссылка на условие]([https://docs.google.com/document/d/1P0C8Jy2TXPyJPLeJkftZ5BHpJA4dARC0xzSaXOSZ-lI/edit])
+[ссылка на условие](https://docs.google.com/document/d/1P0C8Jy2TXPyJPLeJkftZ5BHpJA4dARC0xzSaXOSZ-lI/edit)
 
 ## SonarCloud
 
 Анализ кода проекта доступен на платформе SonarCloud, которая предоставляет отчеты по качеству кода, тестам и другим метрикам.
 
-[Отчет о проекте на SonarCloud]([https://sonarcloud.io/summary/overall?id=Toss1ing_buir_backend](https://sonarcloud.io/summary/overall?id=Toss1ing_bsuir_frontend])
+[Отчет о проекте на SonarCloud](https://sonarcloud.io/summary/overall?id=Toss1ing_bsuir_frontend)
