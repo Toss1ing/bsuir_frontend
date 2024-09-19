@@ -53,7 +53,7 @@ const AdminPage = () => {
 					},
 				}
 			)
-			updateUsersAfterRoleChange(userId, 'ROLE_ADMIN', 'add')
+			updateRole(userId, 'ROLE_ADMIN', 'add')
 		} catch (error) {
 			console.error('Error making user admin:', error)
 		}
@@ -71,7 +71,7 @@ const AdminPage = () => {
 					},
 				}
 			)
-			updateUsersAfterRoleChange(userId, 'ROLE_ADMIN', 'remove')
+			updateRole(userId, 'ROLE_ADMIN', 'remove')
 		} catch (error) {
 			console.error('Error removing admin role:', error)
 		}
@@ -81,20 +81,29 @@ const AdminPage = () => {
 		setUsers(prevUsers => prevUsers.filter(user => user.id !== userId))
 	}
 
-	const updateUsersAfterRoleChange = (userId, name, action) => {
+	const updateRole = (userId, roleName, action) => {
 		setUsers(prevUsers =>
 			prevUsers.map(user =>
-				user.id === userId
-					? {
-							...user,
-							roles:
-								action === 'add'
-									? [...user.roles, { name }]
-									: user.roles.filter(role => role.name !== name),
-					  }
-					: user
+				user.id === userId ? updateUserRoles(user, roleName, action) : user
 			)
 		)
+	}
+
+	const updateUserRoles = (user, name, action) => {
+		if (action === 'add') {
+			return {
+				...user,
+				roles: user.roles.some(role => role.name === name)
+					? user.roles
+					: [...user.roles, { name }],
+			}
+		} else if (action === 'remove') {
+			return {
+				...user,
+				roles: user.roles.filter(role => role.name !== name),
+			}
+		}
+		return user
 	}
 
 	return (
