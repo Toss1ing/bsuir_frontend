@@ -19,7 +19,7 @@ const UserPage = () => {
 	const [searchTerm, setSearchTerm] = useState('')
 
 	const [newTask, setNewTask] = useState({
-		taskName: '',
+		name: '',
 		description: '',
 		endDate: '',
 	})
@@ -50,7 +50,7 @@ const UserPage = () => {
 		const matchesDate =
 			!dateFilter || new Date(task.endDate) <= new Date(dateFilter)
 
-		const matchesSearch = task.taskName
+		const matchesSearch = task.name
 			.toLowerCase()
 			.includes(searchTerm.toLowerCase())
 
@@ -125,7 +125,7 @@ const UserPage = () => {
 			)
 
 			setTasks([...tasks, response.data])
-			setNewTask({ taskName: '', description: '', endDate: '' })
+			setNewTask({ name: '', description: '', endDate: '' })
 		} catch (error) {
 			console.error('Error creating task', error)
 		}
@@ -140,10 +140,8 @@ const UserPage = () => {
 						Task name:{' '}
 						<input
 							type='text'
-							value={newTask.taskName}
-							onChange={e =>
-								setNewTask({ ...newTask, taskName: e.target.value })
-							}
+							value={newTask.name}
+							onChange={e => setNewTask({ ...newTask, name: e.target.value })}
 							required
 						/>
 					</label>
@@ -218,7 +216,7 @@ const UserPage = () => {
 						<tbody>
 							{filteredTasks.map(task => (
 								<tr key={task.id}>
-									<td>{task.taskName}</td>
+									<td>{task.name}</td>
 									<td>{task.description}</td>
 									<td>{new Date(task.endDate).toLocaleDateString()}</td>
 									<td>

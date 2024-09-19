@@ -4,13 +4,9 @@
 
 .user-page {
 	padding: 20px;
-	width: 1750px;
+	width: 1650px;
 	margin: 0 auto;
 	gap: 0px;
-}
-
-.user-page label {
-	margin-right: 0px;
 }
 
 .task-form button {
@@ -55,7 +51,7 @@
 	width: 100%;
 }
 
-h1 {
+.user-page h1 {
 	text-align: center;
 	margin-bottom: 20px;
 	color: #0056b3;

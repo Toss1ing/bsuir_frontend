@@ -56,7 +56,7 @@ const LoginPage = ({ formType, setFormType }) => {
 
 			const userRoles = response.data.roles
 
-			const roleNames = userRoles.map(role => role.roleName)
+			const roleNames = userRoles.map(role => role.name)
 
 			if (formType === 'login' && roleNames.includes('ROLE_ADMIN')) {
 				window.location.href = '/admin'
