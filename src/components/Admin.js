@@ -29,7 +29,6 @@ const AdminPage = () => {
 
 	const handleDeleteUser = async userId => {
 		try {
-			console.log('Attempting to delete user with ID:', userId)
 			await axios.delete(`${API_DELETE_URL}/${userId}`, {
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -43,7 +42,6 @@ const AdminPage = () => {
 
 	const handleMakeAdmin = async userId => {
 		try {
-			console.log('Attempting to make user admin with ID:', userId)
 			await axios.post(
 				`${API_MAKE_ADMIN_URL}/${userId}`,
 				{},
@@ -61,7 +59,6 @@ const AdminPage = () => {
 
 	const handleRemoveAdmin = async userId => {
 		try {
-			console.log('Attempting to remove admin role from user with ID:', userId)
 			await axios.post(
 				`${API_REMOVE_ADMIN_URL}/${userId}`,
 				{},

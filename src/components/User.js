@@ -11,12 +11,15 @@ const API_CREATE_URL = `http://localhost:8080/api/v1/user/add/task`
 const API_ADD_TASK_URL = `http://localhost:8080/api/v1/user/add/task/${localStorage.getItem(
 	'id'
 )}`
+const API_UPDATE_TASK_URL = `http://localhost:8080/api/v1/user/task/edit`
 
 const UserPage = () => {
 	const [tasks, setTasks] = useState([])
 	const [statusFilter, setStatusFilter] = useState('all')
 	const [dateFilter, setDateFilter] = useState('')
 	const [searchTerm, setSearchTerm] = useState('')
+	const [isSortingAsc, setIsSortingAsc] = useState(true)
+	const [editingTaskId, setEditingTaskId] = useState(null)
 
 	const [newTask, setNewTask] = useState({
 		name: '',
@@ -59,12 +62,15 @@ const UserPage = () => {
 
 	const handleDelete = async id => {
 		try {
-			await axios.delete(`${API_DELETE_URL}/${id}`, {
+			const response = await axios.delete(`${API_DELETE_URL}/${id}`, {
 				headers: {
 					Authorization: `Bearer ${localStorage.getItem('token')}`,
 				},
 			})
-			setTasks(tasks.filter(task => task.id !== id))
+			if (response.status === 200 || response.status === 204) {
+				setTasks(tasks.filter(task => task.id !== id))
+				console.log(`${API_DELETE_URL}/${id}`)
+			}
 		} catch (error) {
 			console.error('Error deleting task', error)
 		}
@@ -112,8 +118,6 @@ const UserPage = () => {
 				},
 			})
 
-			console.log(response.data.id)
-
 			await axios.post(
 				`${API_ADD_TASK_URL}/${response.data.id}`,
 				{},
@@ -129,6 +133,45 @@ const UserPage = () => {
 		} catch (error) {
 			console.error('Error creating task', error)
 		}
+	}
+
+	const handleSortByDate = () => {
+		const sortedTasks = [...tasks].sort((a, b) => {
+			const dateA = new Date(a.endDate)
+			const dateB = new Date(b.endDate)
+			return isSortingAsc ? dateA - dateB : dateB - dateA
+		})
+
+		setTasks(sortedTasks)
+		setIsSortingAsc(!isSortingAsc)
+	}
+
+	const handleEditTask = id => {
+		setEditingTaskId(id)
+	}
+
+	const handleSaveEdit = async task => {
+		const formattedEndDate = new Date(task.endDate).toISOString()
+
+		task.endDate = formattedEndDate
+
+		try {
+			await axios.post(`${API_UPDATE_TASK_URL}/${task.id}`, task, {
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem('token')}`,
+				},
+			})
+			setEditingTaskId(null)
+		} catch (error) {
+			console.error('Error updating task', error)
+		}
+	}
+
+	const handleChangeTask = (id, key, value) => {
+		const updatedTasks = tasks.map(task =>
+			task.id === id ? { ...task, [key]: value } : task
+		)
+		setTasks(updatedTasks)
 	}
 
 	return (
@@ -200,6 +243,9 @@ const UserPage = () => {
 						onChange={e => setSearchTerm(e.target.value)}
 					/>
 				</label>
+				<button className='sort-button' onClick={handleSortByDate}>
+					Sort by date {isSortingAsc ? '↑' : '↓'}
+				</button>
 			</div>
 			<div className='task-grid'>
 				{filteredTasks.length > 0 ? (
@@ -210,15 +256,56 @@ const UserPage = () => {
 								<th>Description</th>
 								<th>Date</th>
 								<th>Complete</th>
-								<th>Actions</th>
+								<th>Edit</th>
+								<th>Delete</th>
 							</tr>
 						</thead>
 						<tbody>
 							{filteredTasks.map(task => (
 								<tr key={task.id}>
-									<td>{task.name}</td>
-									<td>{task.description}</td>
-									<td>{new Date(task.endDate).toLocaleDateString()}</td>
+									<td>
+										{editingTaskId === task.id ? (
+											<input
+												type='text'
+												value={task.name}
+												onChange={e =>
+													handleChangeTask(task.id, 'name', e.target.value)
+												}
+											/>
+										) : (
+											task.name
+										)}
+									</td>
+									<td>
+										{editingTaskId === task.id ? (
+											<input
+												type='text'
+												value={task.description}
+												onChange={e =>
+													handleChangeTask(
+														task.id,
+														'description',
+														e.target.value
+													)
+												}
+											/>
+										) : (
+											task.description
+										)}
+									</td>
+									<td>
+										{editingTaskId === task.id ? (
+											<input
+												type='date'
+												value={task.endDate.split('T')[0]}
+												onChange={e =>
+													handleChangeTask(task.id, 'endDate', e.target.value)
+												}
+											/>
+										) : (
+											new Date(task.endDate).toLocaleDateString()
+										)}
+									</td>
 									<td>
 										<input
 											type='checkbox'
@@ -227,7 +314,27 @@ const UserPage = () => {
 										/>
 									</td>
 									<td>
-										<button onClick={() => handleDelete(task.id)}>
+										{editingTaskId === task.id ? (
+											<button
+												className='save-button'
+												onClick={() => handleSaveEdit(task)}
+											>
+												Save
+											</button>
+										) : (
+											<button
+												className='save-button'
+												onClick={() => handleEditTask(task.id)}
+											>
+												Edit
+											</button>
+										)}
+									</td>
+									<td>
+										<button
+											className='delete-button'
+											onClick={() => handleDelete(task.id)}
+										>
 											Delete
 										</button>
 									</td>
