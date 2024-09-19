@@ -35,7 +35,7 @@ const AdminPage = () => {
 					Authorization: `Bearer ${localStorage.getItem('token')}`,
 				},
 			})
-			setUsers(prevUsers => prevUsers.filter(user => user.id !== userId))
+			updateUsersAfterDelete(userId)
 		} catch (error) {
 			console.error('Error deleting user:', error)
 		}
@@ -53,13 +53,7 @@ const AdminPage = () => {
 					},
 				}
 			)
-			setUsers(prevUsers =>
-				prevUsers.map(user =>
-					user.id === userId
-						? { ...user, roles: [...user.roles, { name: 'ROLE_ADMIN' }] }
-						: user
-				)
-			)
+			updateUsersAfterRoleChange(userId, 'ROLE_ADMIN', 'add')
 		} catch (error) {
 			console.error('Error making user admin:', error)
 		}
@@ -77,20 +71,30 @@ const AdminPage = () => {
 					},
 				}
 			)
-			// Update users state to remove admin role
-			setUsers(prevUsers =>
-				prevUsers.map(user =>
-					user.id === userId
-						? {
-								...user,
-								roles: user.roles.filter(role => role.name !== 'ROLE_ADMIN'),
-						  }
-						: user
-				)
-			)
+			updateUsersAfterRoleChange(userId, 'ROLE_ADMIN', 'remove')
 		} catch (error) {
 			console.error('Error removing admin role:', error)
 		}
+	}
+
+	const updateUsersAfterDelete = userId => {
+		setUsers(prevUsers => prevUsers.filter(user => user.id !== userId))
+	}
+
+	const updateUsersAfterRoleChange = (userId, name, action) => {
+		setUsers(prevUsers =>
+			prevUsers.map(user =>
+				user.id === userId
+					? {
+							...user,
+							roles:
+								action === 'add'
+									? [...user.roles, { name }]
+									: user.roles.filter(role => role.name !== name),
+					  }
+					: user
+			)
+		)
 	}
 
 	return (
