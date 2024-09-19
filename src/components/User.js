@@ -5,7 +5,9 @@ import '../css/user.css'
 const API_BASE_URL = `http://localhost:8080/api/v1/user/get/task/${localStorage.getItem(
 	'id'
 )}`
-const API_DELETE_URL = `http://localhost:8080/api/v1/user/delete/task/id`
+const API_DELETE_URL = `http://localhost:8080/api/v1/user/delete/task/id/${localStorage.getItem(
+	'id'
+)}`
 const API_COMPLETE_URL = `http://localhost:8080/api/v1/user/task/complete`
 const API_CREATE_URL = `http://localhost:8080/api/v1/user/add/task`
 const API_ADD_TASK_URL = `http://localhost:8080/api/v1/user/add/task/${localStorage.getItem(
